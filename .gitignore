@@ -19,3 +19,5 @@ htmlcov/
 prepare-dev.sh
 
 *venv*
+
+dev/
