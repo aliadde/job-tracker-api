@@ -19,3 +19,5 @@ uvloop==0.22.1
 watchfiles==1.2.0
 websockets==16.1
 httpx2==2.9.1
+alembic==1.18.5
+uv==0.12.0
