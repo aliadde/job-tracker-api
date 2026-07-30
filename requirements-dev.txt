@@ -1,0 +1,7 @@
+black
+mypy
+ruff
+pytest
+fastapi
+uvicorn
+pydantic

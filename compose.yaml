@@ -1,0 +1,10 @@
+version: "2.40"
+services:
+  webapp:
+    image: postgres:alpine 
+    ports:
+      - 5431:5432
+    environment:
+      POSTGRES_DB: fastapi
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123
