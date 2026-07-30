@@ -4,4 +4,4 @@ ruff
 pytest
 fastapi
 uvicorn
-pydantic
+pydantichttpx2==2.9.1

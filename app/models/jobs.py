@@ -23,5 +23,4 @@ class Jobs(Base):
                         nullable=False)
                         
     # relationships
-    users = relationship("Users", back_populates="jobs")
     companies = relationship("Companies", back_populates="jobs") # 1 company can have many jobs    
