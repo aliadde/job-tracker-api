@@ -11,9 +11,10 @@ app = FastAPI(
 from app.models.users import Users
 from app.models.companies import Companies
 from app.models.jobs import Jobs
-# from app.models.applications import Applications
+from app.models.applications import Applications
 from sqlalchemy.orm import Session
 from app.db.database import  engine, Base
+
 # create all tables in the database
 Base.metadata.create_all(bind=engine)
 
