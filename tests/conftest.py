@@ -21,7 +21,7 @@ def setup_db():
     Base.metadata.drop_all(bind=engine) 
     
 @pytest.fixture(scope="function", autouse=True)
-def db_session(request, setup_db):
+def db_session(setup_db):
     db = setup_db
     try:
         yield db
