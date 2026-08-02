@@ -24,3 +24,4 @@ class Jobs(Base):
                         
     # relationships
     companies = relationship("Companies", back_populates="jobs") # 1 company can have many jobs    
+    applications = relationship("Applications", back_populates="jobs") 

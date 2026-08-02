@@ -17,4 +17,4 @@ class Users(Base):
     # relationships
     companies = relationship("Companies", back_populates="users") 
     
-    # applications = relationship("Applications", back_populates="users") # 1 user can apply for many jobs    
+    applications = relationship("Applications", back_populates="users") # 1 user can apply for many jobs    

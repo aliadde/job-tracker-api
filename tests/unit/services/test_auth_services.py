@@ -2,11 +2,11 @@ import pytest
 from unittest.mock import AsyncMock, Mock, patch
 from app.services.auth_services import AuthService
 from app.schemas.register import UserRegisterRequest
-
+from fastapi import HTTPException
 
 
 @pytest.mark.asyncio
-async def test_register_success():
+async def test_unit_register_success():
 
     # Arrange
     db = Mock()
@@ -19,18 +19,18 @@ async def test_register_success():
     created_user.id = 1
     created_user.username = "usertest"
     created_user.email = "test@test.com"
-    created_user.hashed_password = "123"
+    created_user.hashed_password = "testuserpassword"
     repository.create.return_value = created_user
     
     user_register_request =  UserRegisterRequest(
         username="teestuser",
         email="test@test.com",
-        password="123"
+        password="testuserpassword"
     )
     
     services = AuthService()
     with patch("app.services.auth_services.hash_password", 
-               return_value="123") as hash_mock:
+               return_value="testuserpassword") as hash_mock:
         # Act
         result = await services.register(
             db= db,
@@ -41,7 +41,7 @@ async def test_register_success():
         # Assert
         assert result is created_user
         
-        hash_mock.assert_called_once_with("123") 
+        hash_mock.assert_called_once_with("testuserpassword") 
         
         repository.get_by_email.assert_awaited_once_with(db , created_user.email)
         
@@ -49,19 +49,21 @@ async def test_register_success():
             db=db,
             username="teestuser",
             email="test@test.com",
-            hashed_password="123"
+            hashed_password="testuserpassword"
         )
 
 
 @pytest.mark.asyncio
 async def test_regitser_fail_email_exists():
     db = Mock()
-    repository = Mock()
+    repository = AsyncMock()
     
+    services = AuthService()
+
     user_register_request = UserRegisterRequest(
         username="teestuser",
         email="test@test.com",
-        password="123"
+        password="testuserpassword"
     )
     found_user = Mock()
     found_user.id = 1
@@ -70,5 +72,5 @@ async def test_regitser_fail_email_exists():
     # the user is exists in database
     repository.get_by_email.return_value = found_user
     # now we must fail and expect an Exception
-    with pytest.raises(Exception):
-        await repository.create(db, user_register_request)
+    with pytest.raises(HTTPException) as exc:
+        await services.register(db, user_register_request,repository )

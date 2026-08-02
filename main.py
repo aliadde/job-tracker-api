@@ -8,6 +8,13 @@ app = FastAPI(
 )
 router = APIRouter()
 
+# Import the auth module AFTER creating the router
+from app.api.v1 import auth  # Import the module, not the router
+
+# Include the router from the auth module
+app.include_router(auth.router)  # Include the router with prefix
+
+
 if __name__ == "__main__":
     import uvicorn
     # ============= database config  ================

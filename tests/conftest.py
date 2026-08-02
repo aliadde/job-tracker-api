@@ -43,4 +43,4 @@ def client(db_session):
     # ====== another way
     with TestClient(app) as client:
         yield client
-    app.dependency_overrides.clear()
+    # app.dependency_overrides.clear()
