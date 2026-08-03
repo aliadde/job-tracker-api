@@ -1,4 +1,4 @@
-import pytest, os, dotenv
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 from app.db.database import get_db
@@ -6,7 +6,6 @@ from fastapi.testclient import TestClient
 
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
-# dotenv.load_dotenv()
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
@@ -34,7 +33,7 @@ def client(db_session):
     def override_get_db():
         yield db_session
     
-    from app.main import app
+    from main import app
     app.dependency_overrides[get_db] = override_get_db
     
     # ==== This is one way :

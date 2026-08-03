@@ -1,26 +1,36 @@
+from __future__ import annotations
 import datetime
+from sqlalchemy import String, Boolean, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from sqlalchemy import Column, Integer, String ,Boolean,TIMESTAMP, ForeignKey
 from app.db.database import Base
-from sqlalchemy.orm import relationship
 
+# from app.models import Users, Jobs
+import app.models as models
 class Companies(Base):
     __tablename__ = "companies"
-    id = Column(Integer, primary_key=True, autoincrement=True)
 
-    title = Column(String(255), unique=True, nullable=False)
-    location = Column(String(255), nullable=False)
-    employment_type = Column(String(255), nullable=False) #  Full-time / Part-time / Internship
-    salary = Column(Boolean, default=True)
-    job_url  = Column(String(255))
-    status = Column(Boolean, default=True)
-    created_at = Column(TIMESTAMP, default=datetime.datetime.now())
-    update_at = Column(TIMESTAMP, default=datetime.datetime.now())
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    # ForeignKeys
-    user_id = Column(Integer, ForeignKey("users.id")) # user can have multiple Company
+    title: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    location: Mapped[str] = mapped_column(String(255), nullable=False)
+    employment_type: Mapped[str] = mapped_column(
+        String(255), nullable=False
+    )  # Full-time / Part-time / Internship
+    salary: Mapped[bool] = mapped_column(Boolean, default=True)
+    job_url: Mapped[str | None] = mapped_column(String(255))
+    status: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    # relationships
-    users = relationship("Users", back_populates="companies")
-    jobs = relationship("Jobs", back_populates="companies")
-    
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        default=datetime.datetime.now
+    )
+    update_at: Mapped[datetime.datetime] = mapped_column(
+        default=datetime.datetime.now
+    )
+
+    # Foreign Key
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
+    # Relationships
+    user: Mapped[list["Users"]] = relationship(back_populates="companies") # type: ignore 
+    jobs: Mapped[list["Jobs"]] = relationship(back_populates="companies")  # type: ignore
