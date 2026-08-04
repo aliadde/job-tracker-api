@@ -1,45 +1,38 @@
-import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
-from app.db.database import get_db
+import  os, pytest_asyncio, pytest
+from app.db.database import get_db, Base
 from fastapi.testclient import TestClient
+import main
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"
+TestSessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+@pytest_asyncio.fixture(scope="function", autouse=True)
+async def create_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
 
-TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_db():
-    Base.metadata.create_all(bind=engine)
-    yield TestSessionLocal()
-    Base.metadata.drop_all(bind=engine) 
-    
-@pytest.fixture(scope="function", autouse=True)
-def db_session(setup_db):
-    db = setup_db
-    try:
-        yield db
-    finally:
-        db.close()
-        
+def tear_down():
+    """ end of the tests.
+    It will remove the test.db file after the tests are done.
+    """
+    yield
+    os.remove("test.db")
 
-@pytest.fixture(scope="function")
-def client(db_session):
-    def override_get_db():
-        yield db_session
-    
-    from main import app
-    app.dependency_overrides[get_db] = override_get_db
-    
-    # ==== This is one way :
-    # return app.test_client() 
-    
-    # ====== another way
-    with TestClient(app) as client:
-        yield client
-    # app.dependency_overrides.clear()
+@pytest.fixture()
+def client():
+    return TestClient(main.app)
+     
+async def override_get_db():
+    session = TestSessionLocal()
+    try:
+        yield session 
+    finally:
+        await session.close()
+        
+main.app.dependency_overrides[get_db] = override_get_db

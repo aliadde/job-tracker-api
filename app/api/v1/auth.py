@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories.auth import AuthRepository
 from app.schemas.register import UserRegisterRequest, UserRegisterResponse
-from app.services.auth_services import AuthService
+from app.services.auth import AuthService
 
 # ========== Dependencies ==========
 def get_auth_service() -> AuthService:

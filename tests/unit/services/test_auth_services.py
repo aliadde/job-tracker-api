@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock, Mock, patch
-from app.services.auth_services import AuthService
+from app.services.auth import AuthService
 from app.schemas.register import UserRegisterRequest
 from fastapi import HTTPException
 
@@ -29,7 +29,7 @@ async def test_unit_register_success():
     )
     
     services = AuthService()
-    with patch("app.services.auth_services.hash_password", 
+    with patch("app.services.auth.hash_password", 
                return_value="testuserpassword") as hash_mock:
         # Act
         result = await services.register(
