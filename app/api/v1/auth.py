@@ -3,7 +3,8 @@ from fastapi import  Depends ,status, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.repositories.auth import AuthRepository
-from app.schemas.register import UserRegisterRequest, UserRegisterResponse
+import app.schemas.register as schema_register
+import app.schemas.login as schema_login
 from app.services.auth import AuthService
 
 # ========== Dependencies ==========
@@ -19,12 +20,21 @@ def get_auth_repository() -> AuthRepository:
 router = APIRouter()
 # ==================================
 
-@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserRegisterResponse)
+@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=schema_register.UserRegisterResponse)
 async def register(
-        user_data:UserRegisterRequest ,
+        user_data:schema_register.UserRegisterRequest ,
         auth_service: AuthService = Depends(get_auth_service),
         db: AsyncSession = Depends(get_db),
         user_crud = Depends(get_auth_repository)
     ):
     
     return await auth_service.register(db, user_data,  user_crud)
+
+@router.post("/login", status_code=status.HTTP_200_OK, response_model=schema_login.UserLoginResponse)
+async def login(
+        user_data:schema_login.UserLoginRequest ,
+        auth_service: AuthService = Depends(get_auth_service),
+        db: AsyncSession = Depends(get_db),
+        user_crud = Depends(get_auth_repository)
+    ):
+    return await auth_service.login(db, user_data,  user_crud)
