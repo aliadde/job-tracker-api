@@ -1,6 +1,7 @@
 # app/core/security.py
 
 from pwdlib import PasswordHash
+import jwt
 
 # Create a single reusable password hasher instance.
 _password_hash = PasswordHash.recommended()
@@ -47,3 +48,33 @@ def password_needs_rehash(hashed_password: str) -> bool:
         True if the password should be rehashed.
     """
     return _password_hash.needs_rehash(hashed_password)
+
+def create_jwt_token(payload: dict, public_key: str="secret",algorithm: str="HS256" ):
+    """ 
+    create jwt token.
+    returns:
+        JWT Token
+    Parameters:
+        payload: 
+            The payload must store in  JWT Token.
+        key:
+            Secret_key. (better to load from environment variable)
+        algorithm:
+            algorithm of encoding.
+    """
+    return jwt.encode(payload=payload, key=public_key,algorithm=algorithm )
+
+def decode_jwt_token(JWT_Token_encoded: str, public_key: str="secret",algorithm: str="HS256" ):
+    """ 
+    encoded jwt token.
+    returns:
+        Payload stored in JWT Token.
+    Parameters:
+        payload: 
+            encoded JWT Token.
+        key:
+            Secret_key. (better to load from environment variable)
+        algorithm:
+            algorithm of encoding/decoding.
+    """
+    return jwt.decode(JWT_Token_encoded, public_key, algorithms=[algorithm])

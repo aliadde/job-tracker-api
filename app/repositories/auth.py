@@ -16,8 +16,17 @@ class AuthRepository:
         await db.refresh(user)
         return user
     
-    async def get_by_email(self, db: AsyncSession, email: str) -> Users | None:
+    async def get_by_email(self, db: AsyncSession, email: str
+                    ) -> Users | None:
+        
         stmt = select(Users).where(Users.email == email)
         results = await db.execute(stmt)
         user = results.scalar_one_or_none()
         return user
+
+    async def get_by_username(self, db: AsyncSession, username: str)-> Users|None:
+        stmt = select(Users).where(Users.username == username)
+        result: Users|None = await db.scalars(stmt).first()
+        print(result)
+        return result
+        
