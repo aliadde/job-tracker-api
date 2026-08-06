@@ -1,7 +1,7 @@
 # app/models/applications.py 
 from __future__ import annotations
 import datetime
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, String
 from app.db.database import Base
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
@@ -9,7 +9,7 @@ import app.models as models
 class Applications(Base):
     __tablename__ = "applications"
     id : Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    
+    title: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     status: Mapped[bool] = mapped_column(nullable=False)
     applied_at: Mapped[datetime.datetime] 
     response_date: Mapped[datetime.datetime]

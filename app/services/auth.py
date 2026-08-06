@@ -6,9 +6,10 @@ import app.schemas.login as schema_login
 from app.repositories.auth import AuthRepository
 from app.core.security import (hash_password,
                                verify_password,
-                               create_jwt_token)
+                               create_jwt_token,
+                               decode_jwt_token)
 from app.models.users import Users
-
+from sqlalchemy.ext.asyncio import AsyncSession
 dotenv.load_dotenv()
 # ==================================
 
@@ -65,7 +66,8 @@ class AuthService:
                 # create jwt token for user, return jwt token to user  
                 payload: schema_login.JWTPayload={
                     "id": user.id,
-                    "username": user.username
+                    "username": user.username,
+                    "active": user.is_active
                 }
                 
                 jwt_token = create_jwt_token(
@@ -78,3 +80,45 @@ class AuthService:
             
         raise HTTPException(status.HTTP_404_NOT_FOUND, 
                     detail="invalid username or password")
+
+
+    async def get_current_user(
+            self,
+            token: str ,
+            db: AsyncSession,
+            user_crud:  AuthRepository
+        ) -> Users:
+        
+        # user payload extract
+        current_user = decode_jwt_token(token)
+        if not current_user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Not authenticated",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+            
+        # check active or not
+        if current_user.active == False:
+            raise HTTPException(status_code=400, detail="Inactive user")
+        
+        # query database and return user object completly
+        found_user = await user_crud.get_by_username(db=db, username=current_user.username)
+        if found_user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+        
+        # return some data from user
+        ready_user = {
+            "id": found_user.id,
+            "username": found_user.username,
+            "email": found_user.email,
+            "active": found_user.active,
+            "created_at": found_user.created_at,
+            "update_at": found_user.update_at,
+            "companies": [company.name for company in found_user.companies],
+            "applications": [application.title for application in found_user.applications]
+        }
+        return found_user

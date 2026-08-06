@@ -1,3 +1,5 @@
+from fastapi.security import OAuth2PasswordBearer
+
 from app.db.database import get_db
 from fastapi import  Depends ,status, APIRouter
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +17,7 @@ def get_auth_service() -> AuthService:
 def get_auth_repository() -> AuthRepository:
     return AuthRepository()
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 # ==================================
 # creating router
 router = APIRouter()
@@ -38,3 +41,12 @@ async def login(
         user_crud = Depends(get_auth_repository)
     ):
     return await auth_service.login(db, user_data,  user_crud)
+
+@router.get("/current_user", status_code=status.HTTP_200_OK)
+async def current_user(
+        token: str =  Depends(oauth2_scheme),
+        auth_service: AuthService = Depends(get_auth_service),
+        db: AsyncSession = Depends(get_db),
+        user_crud = Depends(get_auth_repository)
+    ):
+    return await auth_service.get_current_user(token, db, user_crud)

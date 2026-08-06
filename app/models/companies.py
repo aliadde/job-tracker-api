@@ -12,7 +12,7 @@ class Companies(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    title: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
     employment_type: Mapped[str] = mapped_column(
         String(255), nullable=False

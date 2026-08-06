@@ -27,6 +27,5 @@ class AuthRepository:
     async def get_by_username(self, db: AsyncSession, username: str)-> Users|None:
         stmt = select(Users).where(Users.username == username)
         result: Users|None = await db.scalars(stmt).first()
-        print(result)
         return result
         
