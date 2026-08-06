@@ -73,7 +73,8 @@ class AuthService:
                         public_key=os.getenv("SECRET_KEY")
                     )
                 
-                return {"token":jwt_token}
+                return {"access_token":jwt_token,"token_type": "bearer"}
+            
             
         raise HTTPException(status.HTTP_404_NOT_FOUND, 
                     detail="invalid username or password")

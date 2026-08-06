@@ -123,7 +123,8 @@ async def test_login_success():
         username=user_data_rq.username
     )
         
-    assert result.get("token") == token
+    assert result.get("access_token") == token
+    assert result.get("token_type") == "bearer"
     
         
     

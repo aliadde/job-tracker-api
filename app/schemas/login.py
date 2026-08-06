@@ -6,7 +6,8 @@ class UserLoginRequest(BaseModel):
     
     
 class UserLoginResponse(BaseModel):
-    jwt : str
+    access_token: str
+    token_type: str
     
 class JWTPayload(BaseModel):
     id: int
