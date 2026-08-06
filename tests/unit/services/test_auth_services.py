@@ -79,25 +79,30 @@ async def test_regitser_fail_email_exists():
 
 
 # ========= Login ============================
-@pytest.mark.asyncio
-async def test_login_success():
-    from app.models.users import Users
+@pytest.fixture
+def login_setup():
     db = Mock()
     repository = AsyncMock()
-    
     token: str= "1.2.3" 
+    user_data_rq: dict = Mock()
+    return db, repository, token, user_data_rq
 
+@pytest.mark.asyncio
+async def test_login_success(login_setup):
+    from app.models.users import Users
+    db, repository, token, user_data_rq = login_setup
+    
     user =  Users(
         id=0,
         username="testuser",
         hashed_password = "passwordtest"
     )
+    
     repository.get_by_username.return_value = user
-
-    user_data_rq: dict = Mock()
+    
     user_data_rq.username = "testuser"
     user_data_rq.password = "passwordtest"
-    
+
     services: AuthService = AuthService()
     
     with patch("app.services.auth.verify_password") as patched_verify_password:
@@ -129,12 +134,11 @@ async def test_login_success():
         
     
 @pytest.mark.asyncio
-async def test_login_fail_username_incorrect():
-    db = Mock()
-    repository = AsyncMock()
+async def test_login_fail_username_incorrect(login_setup):
+    db, repository, token, user_data_rq = login_setup
     
     repository.get_by_username.return_value = None
-    user_data_rq: dict = Mock()
+
     user_data_rq.username = "testuser"
     user_data_rq.password = "passwordtest"
     
@@ -162,10 +166,9 @@ async def test_login_fail_username_incorrect():
         
 
 @pytest.mark.asyncio
-async def test_login_fail_password_incorreect():
+async def test_login_fail_password_incorreect(login_setup):
     from app.models.users import Users
-    db = Mock()
-    repository = AsyncMock()
+    db, repository, token, user_data_rq = login_setup
     
     user =  Users(
         id=0,
@@ -174,7 +177,6 @@ async def test_login_fail_password_incorreect():
     )
     repository.get_by_username.return_value = user
 
-    user_data_rq : Mock = Mock()
     user_data_rq.username = "testuser"
     user_data_rq.password = "paswordte"
     
