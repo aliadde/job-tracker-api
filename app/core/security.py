@@ -1,6 +1,6 @@
 # app/core/security.py
 
-from pwdlib import PasswordHash
+from pwdlib import PasswordHash 
 import jwt
 
 # Create a single reusable password hasher instance.
@@ -62,7 +62,20 @@ def create_jwt_token(payload: dict, public_key: str="secret",algorithm: str="HS2
         algorithm:
             algorithm of encoding.
     """
-    return jwt.encode(payload=payload, key=public_key,algorithm=algorithm )
+    import dotenv ,os, datetime
+    from datetime import timedelta , timezone
+    
+    dotenv.load_dotenv()
+    
+    expires_delta= os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=30)
+    
+    to_encode = payload.copy()
+    to_encode.update({"exp": expire})
+    return jwt.encode(payload=to_encode, key=public_key, algorithm=algorithm)
 
 def decode_jwt_token(JWT_Token_encoded: str, public_key: str="secret",algorithm: str="HS256" ):
     """ 
