@@ -67,7 +67,7 @@ def create_jwt_token(payload: dict, public_key: str="secret",algorithm: str="HS2
     
     dotenv.load_dotenv()
     
-    expires_delta= os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
+    expires_delta= timedelta(minutes=os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
