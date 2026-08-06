@@ -99,11 +99,11 @@ class AuthService:
             )
             
         # check active or not
-        if current_user.active == False:
+        if current_user.get("active") == False:
             raise HTTPException(status_code=400, detail="Inactive user")
         
         # query database and return user object completly
-        found_user = await user_crud.get_by_username(db=db, username=current_user.username)
+        found_user = await user_crud.get_by_username(db=db, username=current_user.get("username"))
         if found_user is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -121,4 +121,4 @@ class AuthService:
             "companies": [company.name for company in found_user.companies],
             "applications": [application.title for application in found_user.applications]
         }
-        return found_user
+        return ready_user
