@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str 
     ACCESS_TOKEN_EXPIRE_MINUTES: int 
     DATABASE_URL: str
+    DATABASE_URL_ALEMBIC: str
     model_config = SettingsConfigDict( env_file=".env", case_sensitive=True)
 
 settings = Settings()
