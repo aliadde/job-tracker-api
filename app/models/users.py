@@ -5,8 +5,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
 
-# from app.models import Companies, Applications
-import app.models as models
 class Users(Base):
     __tablename__ = "users"
 
@@ -25,10 +23,6 @@ class Users(Base):
     )
 
     # Relationships
-    companies: Mapped[list["Companies"]] = relationship( # type: ignore
-        back_populates="user"
-    )
-
     applications: Mapped[list["Applications"]] = relationship( # type: ignore
         back_populates="user"
     )

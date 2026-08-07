@@ -12,6 +12,6 @@ def create_jobs():
    job+list = extract_job_list.main()
 
    # insert each job into db
-   for job in job_list:
-       job_crud.create(job)
+   # for job in job_list:
+   #     job_crud.create(job)
 
