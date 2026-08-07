@@ -13,3 +13,4 @@ dev/
 postgres-docker
 test.db
 *.db
+.ruff_cache
