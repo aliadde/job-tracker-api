@@ -99,7 +99,7 @@ class AuthService:
         ) -> Users:
         
         # user payload extract
-        current_user = decode_jwt_token(token)
+        current_user = decode_jwt_token(token,public_key=os.getenv("SECRET_KEY"))
         if not current_user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -124,10 +124,9 @@ class AuthService:
             "id": found_user.id,
             "username": found_user.username,
             "email": found_user.email,
-            "active": found_user.active,
+            "is_active": found_user.is_active,
             "created_at": found_user.created_at,
             "update_at": found_user.update_at,
-            "companies": [company.name for company in found_user.companies],
             "applications": [application.title for application in found_user.applications]
         }
         return ready_user

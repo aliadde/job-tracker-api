@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 from app.models.users import Users
 class AuthRepository:
     
@@ -25,11 +26,11 @@ class AuthRepository:
         return user
 
     async def get_by_username(self, db: AsyncSession, username: str)-> Users|None:
-        stmt = select(Users).where(Users.username == username)
+        stmt = select(Users).options(selectinload(Users.applications)).where(Users.username == username)
         result: Users|None = await db.scalars(stmt)
         return result.first()
     
     async def get_by_id(self, db: AsyncSession, id: int)-> Users|None:
-            stmt = select(Users).where(Users.username == id)
+            stmt = select(Users).options(selectinload(Users.applications)).where(Users.username == id)
             result: Users|None = await db.scalars(stmt)
             return result.first()

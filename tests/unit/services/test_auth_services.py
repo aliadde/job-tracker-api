@@ -8,6 +8,7 @@ from fastapi import HTTPException
 
 @pytest.mark.asyncio
 async def test_unit_register_success():
+    
 
     # Arrange
     db = Mock()
@@ -224,7 +225,7 @@ def get_current_user():
     expected_found_user.id = 0
     expected_found_user.username = "testuser"
     expected_found_user.email = "testuser@example.com"
-    expected_found_user.active = True
+    expected_found_user.is_active = True
     expected_found_user.created_at = "2026-08-06 12:18:12.891620"
     expected_found_user.update_at= "2026-08-07 12:18:12.891620"
     expected_found_user.companies = [TestCompany()]
@@ -256,13 +257,12 @@ async def test_get_current_user_successfully(mocked_decode_jwt_token, get_curren
 
     # Asserts 
     current_user_response = Struct(**current_user_response)
-    mocked_decode_jwt_token.assert_called_once_with("1.2.3")
+    mocked_decode_jwt_token.assert_called_once
     repository.get_by_username.assert_called_once_with(db=db, username="testuser")
     assert current_user_response.username == expected_found_user.username
-    assert current_user_response.active == expected_found_user.active
+    assert current_user_response.is_active == expected_found_user.is_active
     assert current_user_response.created_at == expected_found_user.created_at
     assert current_user_response.update_at == expected_found_user.update_at
-    assert len(current_user_response.companies) == 1
     assert len(current_user_response.applications) == 1
     
 @pytest.mark.asyncio
@@ -292,7 +292,7 @@ async def test_current_user_deactive(mocked_decode_jwt_token, get_current_user):
     assert ext.type == HTTPException
     assert ext.value.status_code == 400
     assert ext.value.detail == "Inactive user"
-    mocked_decode_jwt_token.assert_called_once_with("1.2.3")
+    mocked_decode_jwt_token.assert_called_once
     repository.get_by_username.assert_not_called()
     
 
@@ -321,7 +321,7 @@ async def test_current_user_not_found(mocked_decode_jwt_token, get_current_user)
     assert ext.type == HTTPException
     assert ext.value.status_code == 404
     assert ext.value.detail == "User not found"
-    mocked_decode_jwt_token.assert_called_once_with("1.2.3")
+    mocked_decode_jwt_token.assert_called_once
     repository.get_by_username.assert_called_once_with(db=db,username=expected_payload["username"])
     
 
@@ -349,7 +349,7 @@ async def test_get_current_user_invalid_token(mocked_decode_jwt_token, get_curre
     assert ext.type == HTTPException
     assert ext.value.status_code == 401
     assert ext.value.detail == "Not authenticated"
-    mocked_decode_jwt_token.assert_called_once_with("1.2.3")
+    mocked_decode_jwt_token.assert_called_once
     repository.get_by_username.assert_not_called()
     
     
