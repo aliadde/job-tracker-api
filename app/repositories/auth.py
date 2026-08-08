@@ -26,10 +26,10 @@ class AuthRepository:
 
     async def get_by_username(self, db: AsyncSession, username: str)-> Users|None:
         stmt = select(Users).where(Users.username == username)
-        result: Users|None = await db.scalars(stmt).first()
-        return result
+        result: Users|None = await db.scalars(stmt)
+        return result.first()
     
     async def get_by_id(self, db: AsyncSession, id: int)-> Users|None:
             stmt = select(Users).where(Users.username == id)
-            result: Users|None = await db.scalars(stmt).first()
-            return result
+            result: Users|None = await db.scalars(stmt)
+            return result.first()

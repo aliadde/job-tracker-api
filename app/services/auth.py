@@ -55,28 +55,37 @@ class AuthService:
             db=db, username=data.username
         )
         if user : 
-            # password check
-            password_check:bool = verify_password(
-                data.passowrd,
-                user.hashed_password
-            )
+            # is user active or not
+            if user.is_active :
+                
+                # password check
+                password_check:bool = verify_password(
+                    data.password,
+                    user.hashed_password
+                )
 
-            if password_check:
-        
-                # create jwt token for user, return jwt token to user  
-                payload: schema_login.JWTPayload={
-                    "id": user.id,
-                    "username": user.username,
-                    "active": user.is_active
-                }
-                
-                jwt_token = create_jwt_token(
-                        payload=payload,
-                        public_key=os.getenv("SECRET_KEY")
-                    )
-                
-                return {"access_token":jwt_token,"token_type": "bearer"}
+                if password_check:
             
+                    # create jwt token for user, return jwt token to user  
+                    payload: schema_login.JWTPayload={
+                        "id": user.id,
+                        "username": user.username,
+                        "active": user.is_active
+                    }
+                    
+                    jwt_token = create_jwt_token(
+                            payload=payload,
+                            public_key=os.getenv("SECRET_KEY")
+                        )
+                    
+                    return {"access_token":jwt_token,"token_type": "bearer"}
+            
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="User is inactive",
+                )
+                
             
         raise HTTPException(status.HTTP_404_NOT_FOUND, 
                     detail="invalid username or password")

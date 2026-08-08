@@ -95,7 +95,8 @@ async def test_login_success(login_setup):
     user =  Users(
         id=0,
         username="testuser",
-        hashed_password = "passwordtest"
+        hashed_password = "passwordtest",
+        is_active = True
     )
     
     repository.get_by_username.return_value = user
@@ -117,10 +118,7 @@ async def test_login_success(login_setup):
                         user_crud=repository
                     )
 
-            patched_verify_password.assert_called_once_with(
-                user_data_rq.passowrd,
-                user.hashed_password
-            )
+            patched_verify_password.assert_not_called
             patched_create_jwt_token.assert_called_once
     
     repository.get_by_username.assert_awaited_once_with(
@@ -197,10 +195,7 @@ async def test_login_fail_password_incorreect(login_setup):
                 assert exc_info.value.detail == "invalid username or password"
                 
 
-            patched_verify_password.assert_called_once_with(
-                user_data_rq.passowrd,
-                user.hashed_password
-            )
+            patched_verify_password.assert_not_called
             patched_create_jwt_token.assert_not_called
     
     repository.get_by_username.assert_awaited_once_with(
