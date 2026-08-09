@@ -24,7 +24,7 @@ async def get_db():
     db = SessionLocal()
 
     # seeder create jobs and statuses and positions
-    await init_seeder()
+    await init_seeder(SessionLocal)
     
     try:
         yield db

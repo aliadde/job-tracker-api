@@ -3,6 +3,9 @@ from app.db.database import get_db, Base
 from fastapi.testclient import TestClient
 import main
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from app.db.seeeder import main as init_seeder
+
+
 SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
@@ -14,6 +17,8 @@ async def create_tables():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
+    
+    await init_seeder(TestSessionLocal)
 
 
 @pytest.fixture(scope="session", autouse=True)

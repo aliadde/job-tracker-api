@@ -1,0 +1,7 @@
+- applied
+- under_review
+- interview
+- offer
+- rejected
+- withdrawn
+- accepted
