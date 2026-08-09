@@ -1,6 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-
+from app.db.seeeder import main as init_seeder
 
 import dotenv 
 import os 
@@ -22,6 +22,10 @@ async def get_db():
         await conn.run_sync(Base.metadata.create_all)
 
     db = SessionLocal()
+
+    # seeder create jobs and statuses and positions
+    await init_seeder()
+    
     try:
         yield db
     finally:

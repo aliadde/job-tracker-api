@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Depends , APIRouter
+from fastapi import FastAPI
 from app.core.config import settings
-from app.db.database import get_db
+
 
 app = FastAPI(
     title=settings.APP_NAME,
