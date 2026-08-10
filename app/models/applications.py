@@ -11,18 +11,18 @@ class Applications(Base):
     id : Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     
-    applied_at: Mapped[datetime.datetime] 
-    response_date: Mapped[datetime.datetime]
+    applied_at: Mapped[datetime.datetime | None] 
+    response_date: Mapped[datetime.datetime | None]
     created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now)
     update_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now)
 
     # ForeignKeys
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))  # A user can have multiple companies
-    status_id: Mapped[int] = mapped_column(ForeignKey("statuses.id"))  # Status is stored in a separate table
-    position_id: Mapped[int] = mapped_column(ForeignKey("positions.id"))  # Position is stored in a separate table
-    job_id: Mapped[int] = mapped_column(ForeignKey("jobs.id"))  # An application belongs to a specific job
-    company_id: Mapped[int] = mapped_column(ForeignKey("companies.id"))  # A company can have multiple jobs
-    resume_id:  Mapped[int] = mapped_column(ForeignKey("resumes.id"))  # An application have a specific resume
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))  # A user can have multiple companies
+    status_id: Mapped[int | None] = mapped_column(ForeignKey("statuses.id"),nullable=True)  # Status is stored in a separate table
+    position_id: Mapped[int | None] = mapped_column(ForeignKey("positions.id"),nullable=True)  # Position is stored in a separate table
+    job_id: Mapped[int | None] = mapped_column(ForeignKey("jobs.id"),nullable=True)  # An application belongs to a specific job
+    company_id: Mapped[int | None] = mapped_column(ForeignKey("companies.id"),nullable=True)  # A company can have multiple jobs
+    resume_id:  Mapped[int | None] = mapped_column(ForeignKey("resumes.id"),nullable=True)  # An application have a specific resume
     
     # relationships
     user: Mapped["Users"] = relationship( back_populates="applications")  # type: ignore
