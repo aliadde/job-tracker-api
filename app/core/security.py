@@ -67,7 +67,7 @@ def create_jwt_token(payload: dict, public_key: str="secret",algorithm: str="HS2
     
     dotenv.load_dotenv()
     
-    expires_delta= timedelta(minutes=int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")))
+    expires_delta= timedelta(minutes=float(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")))
     if expires_delta:
         expire = datetime.datetime.now(timezone.utc) + expires_delta
     else:
@@ -82,12 +82,24 @@ def decode_jwt_token(JWT_Token_encoded: str, public_key: str="secret",algorithm:
     encoded jwt token.
     returns:
         Payload stored in JWT Token.
-    Parameters:
+    Args:
         payload: 
             encoded JWT Token.
         key:
             Secret_key. (better to load from environment variable)
         algorithm:
             algorithm of encoding/decoding.
+    Exceptions:
+        jwt.ExpiredSignatureError: 
+            Token has expired.
+        jwt.InvalidTokenError: 
+            Invalid token. 
     """
-    return jwt.decode(JWT_Token_encoded, public_key, algorithms=[algorithm])
+    from fastapi import HTTPException, status
+    try:
+        return jwt.decode(JWT_Token_encoded, public_key, algorithms=[algorithm])
+
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
