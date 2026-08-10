@@ -1,0 +1,7 @@
+- Full-time
+- Part-time
+- Freelance
+- Volunteer
+- Contract
+- Temporary
+- Internship
