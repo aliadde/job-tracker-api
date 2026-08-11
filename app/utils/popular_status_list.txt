@@ -1,5 +1,5 @@
 - applied
-- under_review
+- under review
 - interview
 - offer
 - rejected

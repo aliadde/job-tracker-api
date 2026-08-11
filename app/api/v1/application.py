@@ -45,4 +45,4 @@ async def current_user(
     )
     
     # the validations was successfull so we can add app for user
-    # app_service.create(db, app_crud)
+    app_service.create(db, app_crud, new_app_data, user)
