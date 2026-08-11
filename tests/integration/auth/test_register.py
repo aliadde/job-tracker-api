@@ -8,7 +8,7 @@ def test_integration_registeration_success(client):
         "password": "testuserpassword"
     }
     
-    response = client.post("/register", json=user_data)
+    response = client.post("/auth/register", json=user_data)
     print(response.json())
     
     assert response.status_code == 201
@@ -45,7 +45,7 @@ async def test_registeration_failure_same_email_with_db_commit(db_session, clien
         "password": "testuserpassword2"
     }
     
-    response = client.post("/register", json=user_data)
+    response = client.post("/auth/register", json=user_data)
     print(response.json())
     
     assert response.status_code == 409
@@ -57,7 +57,7 @@ def test_registeration_failure_same_email_with_api_requests(client):
         "email":"test@example.com",
         "password":"testuserpassword1"
     }
-    response = client.post("/register", json=user1)
+    response = client.post("/auth/register", json=user1)
     
     user2= {
         "username":"testuser2",
@@ -65,7 +65,7 @@ def test_registeration_failure_same_email_with_api_requests(client):
         "password":"testuserpassword2"
     }
     
-    response2 = client.post("/register", json=user2)
+    response2 = client.post("/auth/register", json=user2)
     
     
     assert response2.status_code == 409
@@ -77,7 +77,7 @@ def test_register_short_name(client):
         "email": "test@example.com",
         "password": "testuserpassword"
     }
-    response = client.post('/register',json=user_data)
+    response = client.post('/auth/register',json=user_data)
     assert response.status_code == 422
 
 def test_register_baad_email(client):
@@ -86,7 +86,7 @@ def test_register_baad_email(client):
         "email": "test@", # the email is not correct style 
         "password": "testuserpassword"
     }
-    res1 = client.post('/register',json=user_data)
+    res1 = client.post('/auth/register',json=user_data)
     assert res1.status_code == 422
     
     user_data2 = { 
@@ -94,7 +94,7 @@ def test_register_baad_email(client):
         "email": "test@gmail.", # the email is not correct style 
         "password": "testuserpassword"
     }
-    res2 = client.post('/register',json=user_data2)
+    res2 = client.post('/auth/register',json=user_data2)
     assert res2.status_code == 422
     
     user_data3 = { 
@@ -102,7 +102,7 @@ def test_register_baad_email(client):
         "email": "@gmail.com", # the email is not correct style 
         "password": "testuserpassword"
     }
-    res3 = client.post('/register',json=user_data3)
+    res3 = client.post('/auth/register',json=user_data3)
     assert res3.status_code == 422
     
     
@@ -112,5 +112,5 @@ def test_register_short_name(client):
         "email": "test@example.com",
         "password": "J7x0o7d" # the password is to  short (< 8)
     }
-    response = client.post('/register',json=user_data)
+    response = client.post('/auth/register',json=user_data)
     assert response.status_code == 422

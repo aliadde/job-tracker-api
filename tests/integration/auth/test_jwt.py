@@ -17,12 +17,12 @@ def exp_change():
 
 @pytest.fixture(scope="function")
 def create_user(client):
-    client.post('/register', json={
+    client.post('/auth/register', json={
         "username": "testuser",
         "email": "testuser@example.com",
         "password": "testpass"
     })
-    token = client.post("/login", json={
+    token = client.post("/auth/login", json={
         "username": "testuser",
         "password": "testpass"
     })
@@ -37,7 +37,7 @@ def test_token_expired(exp_change, create_user, client ):
     from  time import sleep
     
     sleep(1.5)
-    res = client.get("/current_user", headers={"Authorization": f"Bearer {token['access_token']}"})
+    res = client.get("/auth/current_user", headers={"Authorization": f"Bearer {token['access_token']}"})
     
         
     assert res.status_code == 401
@@ -53,7 +53,7 @@ def test_token_invalid(create_user, client):
     from fastapi import HTTPException
     from  time import sleep
     
-    res = client.get("/current_user", headers={"Authorization": f"Bearer {token['access_token']}"})
+    res = client.get("/auth/current_user", headers={"Authorization": f"Bearer {token['access_token']}"})
     
     assert res.status_code == 401
     assert res.json().get("detail") == "Invalid token"
