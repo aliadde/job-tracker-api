@@ -10,11 +10,11 @@ app = FastAPI(
 
 # ==== Routers ====
 # Import the auth module AFTER creating the router
-from app.api.v1 import auth  
+from app.api.v1 import auth , application
 
 # Include the router from the auth module
-app.include_router(auth.router)
-
+app.include_router(auth.router, prefix='/auth',tags=["Authentication"])
+app.include_router(application.router, tags=["Application"])
 
 if __name__ == "__main__":
     import uvicorn
