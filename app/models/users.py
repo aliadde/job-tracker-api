@@ -15,10 +15,10 @@ class Users(Base):
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
 
-    created_at: Mapped[datetime.datetime] = mapped_column(
+    created_at: Mapped[str] = mapped_column(
         default=datetime.datetime.now
     )
-    update_at: Mapped[datetime.datetime] = mapped_column(
+    update_at: Mapped[str] = mapped_column(
         default=datetime.datetime.now
     )
 

@@ -11,10 +11,10 @@ class Applications(Base):
     id : Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     
-    applied_at: Mapped[datetime.datetime | None] 
-    response_date: Mapped[datetime.datetime | None]
-    created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now)
-    update_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now)
+    applied_at: Mapped[str | None] 
+    response_date: Mapped[str | None]
+    created_at: Mapped[str ] = mapped_column(default=datetime.datetime.now)
+    updated_at: Mapped[str ] = mapped_column(default=datetime.datetime.now)
 
     # ForeignKeys
     user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))  # A user can have multiple companies
