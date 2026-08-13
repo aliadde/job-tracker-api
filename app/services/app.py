@@ -87,34 +87,34 @@ class AppService:
             self,
             db: AsyncSession,
             app_crud: AppRepository,
-            app_data: dict,
+            app_data: int | str,
             user: Users
         ):
         """ 
         Delete an application.
         Proccess:
-        1. get the application from database by id (or title)
-        2. check user have access to this application or not 
-        3. delete the application from database
-        4. return the deleted application
+        1. if app_data is str means it is title so search for \
+            title or if int means it is id so search for id of application
+
+        2. get the application from database by id (or title)
+        3. check user have access to this application or not 
+        4. delete the application from database
+        5. return the deleted application
         """
         # =================== 1 ===================
         found_app : Applications
-        
-        # if title of app was provided the title searching have higher priority than id.
-        if app_data.get("title") is not None : 
-            found_app = await app_crud.get_app_by_title(
-                db=db, 
-                title=app_data.get("title")
-            )
-        else:
-        # if title was not provided by user , we have to use id. the responsibility
-        #   of wrong app id deleteioon on the user
+        # check app data str or int
+        if isinstance(app_data, int):
             found_app = await app_crud.get_app_by_id(
                 db=db, 
-                id=app_data.get("id")
+                id=app_data
             )
-    
+        else:
+            found_app = await app_crud.get_app_by_title(
+                db=db, 
+                title=app_data
+            )
+            
         # --- None found
         if found_app is None:
             raise HTTPException(status_code=404, detail="Application not found")
@@ -128,7 +128,7 @@ class AppService:
         
         
         # =================== 3 ===================
-        deleted_app = await app_crud.delete(db=db, app=found_app)
+        deleted_app = await app_crud.delete_app(db=db, app=found_app)
         
         # =================== 4 ===================
         return deleted_app

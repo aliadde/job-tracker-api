@@ -33,7 +33,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 # creating router
 router = APIRouter()
 
-# ================================== create app ==================================
+# ================================== create app ====================================================================
 @router.post("/app", status_code=status.HTTP_201_CREATED, response_model=CreateAppResponse)
 async def create_app(
         new_app_data: CreateAppRequest ,
@@ -60,10 +60,10 @@ async def create_app(
         user
     )
     
-# ================================== delete app ==================================
-@router.delete("/app", status_code=status.HTTP_201_CREATED, response_model=DeleteAppResponse)
+# ================================== delete app ====================================================================
+@router.delete("/app/id/{app_id}", status_code=status.HTTP_200_OK, response_model=DeleteAppResponse)
 async def delete_app(
-        new_app_data: DeleteAppRequest,
+        app_id: int,
         token: str =  Depends(oauth2_scheme),
         db: AsyncSession = Depends(get_db),
         app_service: AppService = Depends(get_app_service),
@@ -83,6 +83,32 @@ async def delete_app(
     return await app_service.delete(
         db,
         app_crud, 
-        dict(new_app_data),
+        app_id,
+        user
+    )
+
+@router.delete("/app/title/{app_title}", status_code=status.HTTP_200_OK, response_model=DeleteAppResponse)
+async def delete_app(
+        app_title: str,
+        token: str =  Depends(oauth2_scheme),
+        db: AsyncSession = Depends(get_db),
+        app_service: AppService = Depends(get_app_service),
+        auth_service: AuthService = Depends(get_auth_service),
+        user_crud: AuthRepository = Depends(get_user_repository),
+        app_crud: AppRepository = Depends(get_app_repository)
+    ):
+    # first check the token sends from user is valid or not
+    user: Users = await auth_service.validate_token(
+        token = token,
+        db = db,
+        user_crud = user_crud
+    )
+    
+    # the validations was successfull so we can add app for user
+    # NOTE: dict(new_app_data): this is used to convert the CreateAppRequest object (pydantic object) into a dictionary
+    return await app_service.delete(
+        db,
+        app_crud, 
+        app_title,
         user
     )

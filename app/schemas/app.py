@@ -9,14 +9,14 @@ import app.utils.extract_status_list  as extract_status_list
 # =============================== Create ============================ 
 class CreateAppRequest(BaseModel):
     title: str
-    applied_at: datetime.datetime | None
-    response_date: datetime.datetime | None
+    applied_at: datetime.datetime | None = None
+    response_date: datetime.datetime | None = None
     created_at: datetime.datetime = datetime.datetime.now().isoformat()# why isoformat? becuase datetime.datetime.now() is not serializabe by python
     updated_at: datetime.datetime = datetime.datetime.now().isoformat()
-    company: None | str
-    status : None | str
-    position: None | str
-    job: None | str
+    company: None | str = None
+    status : None | str = None
+    position: None | str = None
+    job: None | str = None
     
     @field_validator('job')
     def validate_job(cls, value):
