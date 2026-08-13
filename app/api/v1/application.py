@@ -8,7 +8,10 @@ from app.repositories.app import AppRepository
 from app.repositories.auth import AuthRepository
 from app.services.app import AppService
 from app.services.auth import AuthService
-from app.schemas.app import CreateAppRequest, CreateAppResponse
+from app.schemas.app import (
+    CreateAppRequest, CreateAppResponse,
+    DeleteAppRequest, DeleteAppResponse
+)
 from app.models import Users
 
 # ========== Dependencies ==========
@@ -30,7 +33,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 # creating router
 router = APIRouter()
 
-# ==================================
+# ================================== create app ==================================
 @router.post("/app", status_code=status.HTTP_201_CREATED, response_model=CreateAppResponse)
 async def current_user(
         new_app_data: CreateAppRequest ,
@@ -51,6 +54,33 @@ async def current_user(
     # the validations was successfull so we can add app for user
     # NOTE: dict(new_app_data): this is used to convert the CreateAppRequest object (pydantic object) into a dictionary
     return await app_service.create(
+        db,
+        app_crud, 
+        dict(new_app_data),
+        user
+    )
+    
+# ================================== delete app ==================================
+@router.post("/app", status_code=status.HTTP_201_CREATED, response_model=DeleteAppResponse)
+async def current_user(
+        new_app_data: DeleteAppRequest,
+        token: str =  Depends(oauth2_scheme),
+        db: AsyncSession = Depends(get_db),
+        app_service: AppService = Depends(get_app_service),
+        auth_service: AuthService = Depends(get_auth_service),
+        user_crud: AuthRepository = Depends(get_user_repository),
+        app_crud: AppRepository = Depends(get_app_repository)
+    ):
+    # first check the token sends from user is valid or not
+    user: Users = await auth_service.validate_token(
+        token = token,
+        db = db,
+        user_crud = user_crud
+    )
+    
+    # the validations was successfull so we can add app for user
+    # NOTE: dict(new_app_data): this is used to convert the CreateAppRequest object (pydantic object) into a dictionary
+    return await app_service.delete(
         db,
         app_crud, 
         dict(new_app_data),

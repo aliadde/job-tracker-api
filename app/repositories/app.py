@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from app.models.applications import Applications
@@ -49,3 +49,22 @@ class AppRepository:
         query = select(Statuses).where(Statuses.status == status)
         result = await db.execute(query)
         return result.scalars().first()
+    
+    async def get_app_by_id(self, db: AsyncSession, id: int):
+        from app.models import Applications
+        query = select(Applications).where(Applications.id == id)
+        result = await db.execute(query)
+        return result.scalars().first()
+    
+    async def get_app_by_title(self, db: AsyncSession, title: str):
+        from app.models import Applications
+        query = select(Applications).where(Applications.title == title)
+        result = await db.execute(query)
+        return result.scalars().first()
+    
+    async def delete_app(self, db: AsyncSession, app: Applications):
+        # now deleting the app
+        await db.delete(app)
+        await db.commit()
+        # return deleted app to user
+        return app

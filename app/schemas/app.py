@@ -1,10 +1,12 @@
-from pydantic  import BaseModel, field_validator
+from pydantic  import BaseModel, field_validator, field_serializer
 from typing import Literal
 import datetime
 import app.utils.extract_job_list as extract_job_list
 import app.utils.extract_position_list as extract_position_list
 import app.utils.extract_status_list  as extract_status_list
 
+
+# =============================== Create ============================ 
 class CreateAppRequest(BaseModel):
     title: str
     applied_at: datetime.datetime | None
@@ -40,6 +42,27 @@ class CreateAppRequest(BaseModel):
     
     
 class CreateAppResponse(BaseModel):
+    id : int 
+    title: str
+    user_id : int | None
+    applied_at: datetime.datetime | None
+    response_date: datetime.datetime | None
+    company_id : int | None
+    position_id : int | None
+    job_id : int | None
+    status_id : int | None
+    resume_id : int | None
+    created_at : datetime.datetime
+    updated_at : datetime.datetime
+
+# =============================== Delete ============================ 
+class DeleteAppRequest(BaseModel):
+    id : int | None = None
+    title : str | None = None
+    
+
+    
+class DeleteAppResponse(BaseModel):
     id : int 
     title: str
     user_id : int | None
