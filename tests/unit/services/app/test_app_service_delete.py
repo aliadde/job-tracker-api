@@ -38,9 +38,9 @@ async def test_app_service_delete_app_success(setup, app_service: AppService):
     mocked_user = Mock()
     mocked_user.id = 1
     # request data
-    app_data = DeleteAppRequest(
-        id=1
-    )
+    app_data = {
+        "id": 1
+    }
     
     deleted_app = await app_service.delete(
         db= mocked_db,
@@ -76,7 +76,7 @@ async def test_app_service_delete_app_fail_not_found_app_with_id(setup, app_serv
     mocked_user = Mock()
     mocked_user.id = 1
     # request data
-    app_data = DeleteAppRequest(
+    app_data = dict(
         id=1
     )
     with pytest.raises(HTTPException) as exc: 
@@ -113,7 +113,7 @@ async def test_app_service_delete_app_fail_not_found_app_with_title(setup, app_s
     mocked_user = Mock()
     mocked_user.id = 1
     # request data
-    app_data = DeleteAppRequest(
+    app_data = dict(
         title="test app"
     )
     with pytest.raises(HTTPException) as exc: 
@@ -153,7 +153,7 @@ async def test_app_service_delete_app_fail_not_found_app_with_both_id_title(setu
     mocked_user.id = 1
     
     # request data
-    app_data = DeleteAppRequest(
+    app_data = dict(
         id=1,
         title="test app"
     )
@@ -169,7 +169,6 @@ async def test_app_service_delete_app_fail_not_found_app_with_both_id_title(setu
     mocked_repository.get_app_by_title.assert_awaited_once
     mocked_repository.get_app_by_id.assert_not_awaited
     mocked_repository.delete.assert_not_awaited
-
     
 @pytest.mark.anyio
 async def test_app_service_delete_app_fail_user_not_access(setup, app_service: AppService):
@@ -195,7 +194,7 @@ async def test_app_service_delete_app_fail_user_not_access(setup, app_service: A
     mocked_user.id = 1
     
     # request data
-    app_data = DeleteAppRequest(
+    app_data = dict(
         id=1,
         title="test app"
     )

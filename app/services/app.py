@@ -16,7 +16,7 @@ class AppService:
             self,
             db: AsyncSession,
             app_crud: AppRepository,
-            app_data: CreateAppRequest,
+            app_data: dict,
             user: Users
         ):
         """ 
@@ -87,7 +87,7 @@ class AppService:
             self,
             db: AsyncSession,
             app_crud: AppRepository,
-            app_data: DeleteAppRequest,
+            app_data: dict,
             user: Users
         ):
         """ 
@@ -102,17 +102,17 @@ class AppService:
         found_app : Applications
         
         # if title of app was provided the title searching have higher priority than id.
-        if app_data.title is not None : 
+        if app_data.get("title") is not None : 
             found_app = await app_crud.get_app_by_title(
                 db=db, 
-                title=app_data.title
+                title=app_data.get("title")
             )
-        else: 
+        else:
         # if title was not provided by user , we have to use id. the responsibility
         #   of wrong app id deleteioon on the user
             found_app = await app_crud.get_app_by_id(
                 db=db, 
-                id=app_data.id
+                id=app_data.get("id")
             )
     
         # --- None found

@@ -35,7 +35,7 @@ router = APIRouter()
 
 # ================================== create app ==================================
 @router.post("/app", status_code=status.HTTP_201_CREATED, response_model=CreateAppResponse)
-async def current_user(
+async def create_app(
         new_app_data: CreateAppRequest ,
         token: str =  Depends(oauth2_scheme),
         db: AsyncSession = Depends(get_db),
@@ -61,8 +61,8 @@ async def current_user(
     )
     
 # ================================== delete app ==================================
-@router.post("/app", status_code=status.HTTP_201_CREATED, response_model=DeleteAppResponse)
-async def current_user(
+@router.delete("/app", status_code=status.HTTP_201_CREATED, response_model=DeleteAppResponse)
+async def delete_app(
         new_app_data: DeleteAppRequest,
         token: str =  Depends(oauth2_scheme),
         db: AsyncSession = Depends(get_db),
