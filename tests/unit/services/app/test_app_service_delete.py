@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock, Mock, patch
 from app.services.app import AppService
-from app.schemas.app import DeleteAppRequest
 from fastapi import HTTPException
 # ================= setup =================
 @pytest.fixture
@@ -27,20 +26,17 @@ async def test_app_service_delete_app_success(setup, app_service: AppService):
     # found app mocked
     mocked_found_app = Mock()
     mocked_found_app.id = 1
-    mocked_found_app.title = None
     mocked_found_app.user_id = 1
     mocked_repository.get_app_by_id.return_value = mocked_found_app
 
     # mocking repository delete method
-    mocked_repository.delete.return_value =  mocked_found_app
+    mocked_repository.delete_app.return_value =  mocked_found_app
     
     # mocked user
     mocked_user = Mock()
     mocked_user.id = 1
     # request data
-    app_data = {
-        "id": 1
-    }
+    app_data = 1
     
     deleted_app = await app_service.delete(
         db= mocked_db,
@@ -49,7 +45,8 @@ async def test_app_service_delete_app_success(setup, app_service: AppService):
         user=  mocked_user
     ) 
     assert deleted_app is not None
-    assert deleted_app is mocked_found_app
+    assert deleted_app.id == mocked_found_app.id
+    
     mocked_repository.get_app_by_id.assert_awaited_once
     mocked_repository.get_app_by_title.assert_not_awaited
     mocked_repository.delete.assert_awaited_once
@@ -76,9 +73,7 @@ async def test_app_service_delete_app_fail_not_found_app_with_id(setup, app_serv
     mocked_user = Mock()
     mocked_user.id = 1
     # request data
-    app_data = dict(
-        id=1
-    )
+    app_data = 1
     with pytest.raises(HTTPException) as exc: 
         await app_service.delete(
             db= mocked_db,
@@ -113,9 +108,8 @@ async def test_app_service_delete_app_fail_not_found_app_with_title(setup, app_s
     mocked_user = Mock()
     mocked_user.id = 1
     # request data
-    app_data = dict(
-        title="test app"
-    )
+    app_data = "test app"
+    
     with pytest.raises(HTTPException) as exc: 
         await app_service.delete(
             db= mocked_db,
@@ -153,10 +147,7 @@ async def test_app_service_delete_app_fail_not_found_app_with_both_id_title(setu
     mocked_user.id = 1
     
     # request data
-    app_data = dict(
-        id=1,
-        title="test app"
-    )
+    app_data = "unknown app"
     with pytest.raises(HTTPException) as exc: 
         await app_service.delete(
             db= mocked_db,
@@ -194,10 +185,8 @@ async def test_app_service_delete_app_fail_user_not_access(setup, app_service: A
     mocked_user.id = 1
     
     # request data
-    app_data = dict(
-        id=1,
-        title="test app"
-    )
+    app_data = 1
+    
     with pytest.raises(HTTPException) as exc: 
         await app_service.delete(
             db= mocked_db,

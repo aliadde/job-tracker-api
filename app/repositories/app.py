@@ -69,7 +69,7 @@ class AppRepository:
         # return deleted app to user
         return app
     
-    async def update(db: AsyncSession, app: Applications, updated_data: dict[str, any]):
+    async def update(self, db: AsyncSession, app: Applications, updated_data: dict[str, any]):
         # change fields and value of them
         for key, value in updated_data.items():
             setattr(app, key, value)

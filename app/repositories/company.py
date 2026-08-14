@@ -10,3 +10,7 @@ class CompanyRepository:
         await db.commit()
         await db.refresh(company)
         return company
+    
+    async def delete(self, db: AsyncSession, company: Companies):
+            await db.delete(company)
+            await db.commit()

@@ -76,14 +76,14 @@ class DeleteAppResponse(BaseModel):
 class UpdateAppRequest(BaseModel):
     # patch: can contain any of filed of that app
     # TODO: can have all field of the app model but 
-    title: str | None
-    applied_at: str | None
-    response_date: str | None
-    status : str  | None
-    position : str | None
-    job : str | None
-    company : str | None
-    resume : str | None
+    title: str | None = None
+    applied_at: str | None = None
+    response_date: str | None = None
+    status : str  | None = None
+    position : str | None = None
+    job : str | None = None
+    company : str | None = None
+    resume : str | None = None
     
 class UpdateAppResponse(BaseModel):
     # return whole app updated
