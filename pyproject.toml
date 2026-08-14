@@ -2,3 +2,9 @@
 
 [tool.pytest]
 addopts = ["-p", "no:warnings"]
+
+[tool.ruff.lint]
+# apply all by default
+select = ["ALL"]
+# Exclude a variety of commonly ignored directories.
+exclude = []

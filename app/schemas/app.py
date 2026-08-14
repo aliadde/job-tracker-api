@@ -56,13 +56,37 @@ class CreateAppResponse(BaseModel):
     updated_at : datetime.datetime
 
 # =============================== Delete ============================ 
-class DeleteAppRequest(BaseModel):
-    id : int | None = None
-    title : str | None = None
-    
+# DeleteApprequest is not exist becuase : paramters pass in to url not in body of request
 
-    
 class DeleteAppResponse(BaseModel):
+    id : int 
+    title: str
+    user_id : int | None
+    applied_at: datetime.datetime | None
+    response_date: datetime.datetime | None
+    company_id : int | None
+    position_id : int | None
+    job_id : int | None
+    status_id : int | None
+    resume_id : int | None
+    created_at : datetime.datetime
+    updated_at : datetime.datetime
+    
+# =============================== Update ============================ 
+class UpdateAppRequest(BaseModel):
+    # patch: can contain any of filed of that app
+    # TODO: can have all field of the app model but 
+    title: str | None
+    applied_at: str | None
+    response_date: str | None
+    status : str  | None
+    position : str | None
+    job : str | None
+    company : str | None
+    resume : str | None
+    
+class UpdateAppResponse(BaseModel):
+    # return whole app updated
     id : int 
     title: str
     user_id : int | None

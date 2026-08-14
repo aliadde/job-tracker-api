@@ -1,14 +1,20 @@
+import dotenv
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models import Users
+from app.models.applications import Applications
+from app.models.companies import Companies
+from app.models.jobs import Jobs
+from app.models.positions import Positions
+from app.models.statuses import Statuses
 from app.repositories.app import AppRepository
 from app.schemas.app import (
-    CreateAppRequest, CreateAppResponse,
-    DeleteAppRequest, DeleteAppResponse
+    CreateAppRequest,
+    CreateAppResponse,
+    DeleteAppResponse,
 )
-from app.models import Applications
-from fastapi import HTTPException, status
-from app.models.companies import Companies
-import dotenv
-from app.models import Users
+
 dotenv.load_dotenv()
 
 class AppService: 
@@ -47,7 +53,7 @@ class AppService:
         # =============== status ===============
         # get status id from dtabase if exist
         if app_data.get("status") is not None:
-            status_found: None | int = await app_crud.get_status_by_name(
+            status_found: None | Statuses = await app_crud.get_status_by_name(
                 db, app_data.get("status")
             )
             if status_found is not None :
@@ -56,7 +62,7 @@ class AppService:
         # =============== position ===============
         # get position id from dtabase if exist
         if app_data.get("position") is not None:
-            position_found: None | int = await app_crud.get_position_by_name(
+            position_found: None | Positions = await app_crud.get_position_by_name(
                 db, app_data.get("position")
             )
             if position_found is not None :
@@ -132,3 +138,80 @@ class AppService:
         
         # =================== 4 ===================
         return deleted_app
+    
+    async def update(
+                self,
+                db: AsyncSession,
+                app_crud: AppRepository,
+                app_data: int | str,
+                updated_data: dict[str, str|int|None ],
+                user: Users
+            ):
+            """
+            1. check application exist by title or id
+            2. check user have access to app
+            [3.] if status or job or position or company used, replace them with their id 
+            4. replace fields snnt
+            5. replace it in database
+            """
+            # ================================ 1 ================================
+            if isinstance(app_data, int):
+                # app_data is app id 
+                found_app: Applications = await app_crud.get_app_by_id(app_data)
+            else :
+                # app_data is app title 
+                found_app: Applications = await app_crud.get_app_by_title(app_data)
+            
+            
+            # --- None found
+            if found_app is None:
+                raise HTTPException(status_code=404, detail="Application not found")
+            
+            # ================================ 2 ================================
+            if user.id != found_app.user_id: 
+                raise HTTPException(status_code=401,detail="You do not have access to this application")
+
+            # ================================ 3 ================================
+    
+            # =============== company ===============
+            # get company full object from database with name
+            if  updated_data.get("company")  and  updated_data.get("company") is not None:
+                company_found: None | Companies = await app_crud.get_company_by_name(
+                        db, updated_data.get("company")
+                    )
+                if company_found is not None :
+                                    updated_data["company"] = company_found.id
+
+            # =============== status ===============
+            # get status id from dtabase if exist
+            if  updated_data.get("status")  and  updated_data.get("status") is not None:
+                status_found: None | Statuses = await app_crud.get_status_by_name(
+                    db, updated_data.get("status")
+                )
+                
+                if status_found is not None :
+                    updated_data["status"] = status_found.id
+    
+            # =============== position ===============
+            # get position id from dtabase if exist
+            if updated_data.get("position") and updated_data.get("position") is not None:
+                position_found: None | int = await app_crud.get_position_by_name(
+                    db, updated_data.get("position")
+                )
+                if position_found is not None :
+                    updated_data["position"] = position_found.id
+    
+            # =============== job ===============
+            # get job id from dtabase if exist
+            if  updated_data.get("job") and updated_data.get("job") is not None:
+                job_found: None | Jobs = await app_crud.get_job_by_name(
+                    db, updated_data.get("job")
+                )
+                
+                if job_found is not None :
+                    updated_data["job"] = job_found.id
+                    
+            # ================================ 4 ================================
+            updated_app = await app_crud.update(db, found_app, updated_data)
+            
+            return updated_app

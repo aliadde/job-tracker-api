@@ -68,3 +68,12 @@ class AppRepository:
         await db.commit()
         # return deleted app to user
         return app
+    
+    async def update(db: AsyncSession, app: Applications, updated_data: dict[str, any]):
+        # change fields and value of them
+        for key, value in updated_data.items():
+            setattr(app, key, value)
+        
+        db.commit()
+        db.refresh(app)
+        return app
