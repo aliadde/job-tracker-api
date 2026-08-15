@@ -113,7 +113,7 @@ async def delete_app_by_title(
     )
     
 # ================================== update app ====================================================================
-@router.patch("/app/update/{app_title}", status_code=status.HTTP_200_OK, response_model=UpdateAppResponse)
+@router.patch("/app/update/title/{app_title}", status_code=status.HTTP_200_OK, response_model=UpdateAppResponse)
 async def update_app_by_title(
         app_title: str,
         data: UpdateAppRequest,
@@ -145,7 +145,7 @@ async def update_app_by_title(
         user
     )
 
-@router.patch("/app/update/{app_id}", status_code=status.HTTP_200_OK, response_model=UpdateAppResponse)
+@router.patch("/app/update/id/{app_id}", status_code=status.HTTP_200_OK, response_model=UpdateAppResponse)
 async def update_app_by_id(
         app_id: int,
         data: UpdateAppRequest,

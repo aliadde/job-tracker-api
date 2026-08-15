@@ -112,7 +112,7 @@ async def test_update_an_app_by_title(setup_,client):
         applied_at="2023-04-01T12:00:00Z"
     )
     response_update = client.patch(
-        f'/app/update/{app_title}', 
+        f'/app/update/title/{app_title}', 
         json=update_data,
         headers={'Authorization': f'Bearer {token}'}
     )
@@ -123,7 +123,9 @@ async def test_update_an_app_by_title(setup_,client):
     assert response_update.json().get("applied_at") == "2023-04-01T12:00:00Z"
     
 @pytest.mark.anyio
-async def test_update_an_app_by_title_with_all_fields(setup_, client, create_company):
+async def test_update_an_app_by_title_with_all_fields(
+    setup_, client, create_company
+):
     """ 
     update an app by title. 
     update fileds with all fields.
@@ -143,14 +145,13 @@ async def test_update_an_app_by_title_with_all_fields(setup_, client, create_com
         company = "testcompany"
     )
     response_update = client.patch(
-        f'/app/update/{app_title}', 
+        f'/app/update/title/{app_title}', 
         json=update_data,
         headers={'Authorization': f'Bearer {token}'}
     )
 
     assert response_update.status_code == 200
     assert response_update.json().get("id") == app.get("id")
-
 
 @pytest.mark.anyio
 async def test_update_an_app_by_title_with_company_fields(setup_, client, create_company):
@@ -167,7 +168,7 @@ async def test_update_an_app_by_title_with_company_fields(setup_, client, create
         company = "testcompany"
     )
     response_update = client.patch(
-        f'/app/update/{app_title}', 
+        f'/app/update/title/{app_title}', 
         json=update_data,
         headers={'Authorization': f'Bearer {token}'}
     )
@@ -194,7 +195,7 @@ async def test_update_an_app_by_title_with_status_field(setup_, client, get_stat
     applied_status_id = get_status_id
     
     response_update = client.patch(
-        f'/app/update/{app_title}', 
+        f'/app/update/title/{app_title}', 
         json=update_data,
         headers={'Authorization': f'Bearer {token}'}
     )
@@ -219,7 +220,7 @@ async def test_update_an_app_by_title_with_job_field(setup_, get_job_id, client,
     )
     software_engineer_job_id = get_job_id
     response_update = client.patch(
-        f'/app/update/{app_title}', 
+        f'/app/update/title/{app_title}', 
         json=update_data,
         headers={'Authorization': f'Bearer {token}'}
     )
@@ -245,7 +246,7 @@ async def test_update_an_app_by_title_with_position_fields(setup_, get_position_
     full_time_possition_id = get_position_id
     
     response_update = client.patch(
-        f'/app/update/{app_title}', 
+        f'/app/update/title/{app_title}', 
         json=update_data,
         headers={'Authorization': f'Bearer {token}'}
     )
@@ -276,7 +277,7 @@ async def test_update_an_app_by_title_with_all_fields_fail_wrong_app_title(setup
         company = "testcompany"
     )
     response_update = client.patch(
-        f'/app/update/{app_title}', 
+        f'/app/update/title/{app_title}', 
         json=update_data,
         headers={'Authorization': f'Bearer {token}'}
     )
@@ -285,7 +286,9 @@ async def test_update_an_app_by_title_with_all_fields_fail_wrong_app_title(setup
     assert response_update.json().get("detail") == "Application not found"
     
 @pytest.mark.anyio
-async def test_update_an_app_by_title_with_all_fields_fail_not_access_by_this_user(setup_, setup_2, client, create_company):
+async def test_update_an_app_by_title_with_all_fields_fail_not_access_by_this_user(
+    setup_, setup_2, client, create_company
+):
     """ 
     update an app by title. but fail because user not have access  to this app
     fileds:
@@ -306,10 +309,245 @@ async def test_update_an_app_by_title_with_all_fields_fail_not_access_by_this_us
         company = "testcompany"
     )
     response_update = client.patch(
-        f'/app/update/{app_title}', 
+        f'/app/update/title/{app_title}', 
         json=update_data,
         headers={'Authorization': f'Bearer {token_user_2}'}
     )
 
     assert response_update.status_code == 401
-    assert response_update.json().get("detail") == "You do not have access to this application"
+    assert response_update.json().get("detail") ==\
+        "You do not have access to this application"
+
+# ============================= by id ========================
+@pytest.mark.anyio
+async def test_update_an_app_by_id(setup_,client):
+    """ 
+    update an app with id of taht app .
+    update: applied_at field
+    """
+    token = setup_
+    
+    app = create_app(token, client)
+    app_id  = app.get("id")
+    assert app_id is not None
+    update_data = dict(
+        applied_at="2023-04-01T12:00:00Z"
+    )
+    response_update = client.patch(
+        f'/app/update/id/{app_id}', 
+        json=update_data,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response_update.status_code == 200
+    assert response_update.json().get("id") == app.get("id")
+    assert response_update.json().get("title") == app.get("title")
+    assert response_update.json().get("applied_at") == "2023-04-01T12:00:00Z"
+    
+    
+@pytest.mark.anyio
+async def test_update_an_app_by_id_with_all_fields(
+    setup_, client, create_company
+):
+    """ 
+    update an app by id. 
+    update fileds with all fields.
+    """
+    token = setup_
+    
+    app = create_app(token, client)
+    app_id  = app.get("id")
+    assert app_id is not None
+    update_data = dict(
+        title= "updated title",
+        applied_at= "2023-04-01T12:00:00Z",
+        response_date= "2025-04-01T12:00:00Z",
+        status ="applied",
+        position = "Full-time",
+        job = "Software Engineer",
+        company = "testcompany"
+    )
+    response_update = client.patch(
+        f'/app/update/id/{app_id}', 
+        json=update_data,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response_update.status_code == 200
+    assert response_update.json().get("id") == app.get("id")
+
+
+@pytest.mark.anyio
+async def test_update_an_app_by_id_with_company_fields(
+    setup_, client, create_company
+):
+    """ 
+    update an app by id. 
+    update company field.
+    """
+    token = setup_
+    
+    app = create_app(token, client)
+    app_id  = app.get("id")
+    assert app_id is not None
+    update_data = dict(
+        company = "testcompany"
+    )
+    response_update = client.patch(
+        f'/app/update/id/{app_id}', 
+        json=update_data,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response_update.status_code == 200
+    assert response_update.json().get("id") == app.get("id")
+    assert response_update.json().get("company_id") == 1
+
+@pytest.mark.anyio
+async def test_update_an_app_by_id_with_status_field(
+    setup_, client, get_status_id, create_company
+):
+    """ 
+    update an app by id. 
+    update fileds with status field.
+    """
+    token = setup_
+    
+    app = create_app(token, client)
+    app_id  = app.get("id")
+    assert app_id is not None
+    update_data = dict(
+        status ="applied",
+    )
+    # applied status id 
+    applied_status_id = get_status_id
+    
+    response_update = client.patch(
+        f'/app/update/id/{app_id}', 
+        json=update_data,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response_update.status_code == 200
+    assert response_update.json().get("id") == app.get("id")
+    assert response_update.json().get("status_id") == applied_status_id
+
+@pytest.mark.anyio
+async def test_update_an_app_by_id_with_job_field(
+    setup_, get_job_id, client, create_company
+):
+    """ 
+    update an app by id. 
+    update fileds with all fields.
+    """
+    token = setup_
+    
+    app = create_app(token, client)
+    app_id  = app.get("id")
+    assert app_id is not None
+    update_data = dict(
+        job = "Software Engineer"
+    )
+    software_engineer_job_id = get_job_id
+    response_update = client.patch(
+        f'/app/update/id/{app_id}', 
+        json=update_data,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response_update.status_code == 200
+    assert response_update.json().get("id") == app.get("id")
+    assert response_update.json().get("job_id") == software_engineer_job_id
+
+@pytest.mark.anyio
+async def test_update_an_app_by_id_with_position_fields(
+    setup_, get_position_id, client, create_company
+):
+    """ 
+    update an app by id. 
+    update fileds with positon
+    """
+    token = setup_
+    
+    app = create_app(token, client)
+    app_id  = app.get("id")
+    assert app_id is not None
+    update_data = dict(
+        position = "Full-time"
+    )
+    full_time_possition_id = get_position_id
+    
+    response_update = client.patch(
+        f'/app/update/id/{app_id}', 
+        json=update_data,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response_update.status_code == 200
+    assert response_update.json().get("id") == app.get("id")
+    assert response_update.json().get("position_id") == full_time_possition_id
+
+@pytest.mark.anyio
+async def test_update_an_app_by_id_with_all_fields_fail_wrong_app_id(
+    setup_, client, create_company
+):
+    """ 
+    update an app by id. but fail becuase wrong id 
+    update fileds with all fields.
+
+    """
+    token = setup_
+    
+    app = create_app(token, client)
+    app_id  = app.get("id") + 11 # cause of fail
+    assert app_id is not None
+    update_data = dict(
+        title= "updated title",
+        applied_at= "2023-04-01T12:00:00Z",
+        response_date= "2025-04-01T12:00:00Z",
+        status ="applied",
+        position = "Full-time",
+        job = "Software Engineer",
+        company = "testcompany"
+    )
+    response_update = client.patch(
+        f'/app/update/id/{app_id}', 
+        json=update_data,
+        headers={'Authorization': f'Bearer {token}'}
+    )
+
+    assert response_update.status_code == 404
+    assert response_update.json().get("detail") == "Application not found"
+
+@pytest.mark.anyio
+async def test_update_an_app_by_id_with_all_fields_fail_not_access_by_this_user(
+    setup_, setup_2, client, create_company
+):
+    """ 
+    update an app by id. but fail because user not have access  to this app
+    fileds:
+    update fileds with all fields.
+    """
+    token = setup_
+    token_user_2 = setup_2
+    app = create_app(token, client)
+    app_id  = app.get("id")
+    assert app_id is not None
+    update_data = dict(
+        title= "updated title",
+        applied_at= "2023-04-01T12:00:00Z",
+        response_date= "2025-04-01T12:00:00Z",
+        status ="applied",
+        position = "Full-time",
+        job = "Software Engineer",
+        company = "testcompany"
+    )
+    response_update = client.patch(
+        f'/app/update/id/{app_id}', 
+        json=update_data,
+        headers={'Authorization': f'Bearer {token_user_2}'}
+    )
+
+    assert response_update.status_code == 401
+    assert response_update.json().get("detail") ==\
+        "You do not have access to this application"

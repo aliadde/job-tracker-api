@@ -10,13 +10,10 @@ from app.models.positions import Positions
 from app.models.statuses import Statuses
 from app.repositories.app import AppRepository
 from app.schemas.app import (
-    CreateAppRequest,
     CreateAppResponse,
-    DeleteAppResponse,
 )
 
 dotenv.load_dotenv()
-
 
 class AppService:
     async def create(
