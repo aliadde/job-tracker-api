@@ -145,4 +145,36 @@ async def update_app_by_title(
         user
     )
 
+@router.patch("/app/update/{app_id}", status_code=status.HTTP_200_OK, response_model=UpdateAppResponse)
+async def update_app_by_id(
+        app_id: int,
+        data: UpdateAppRequest,
+        token: str =  Depends(oauth2_scheme),
+        db: AsyncSession = Depends(get_db),
+        app_service: AppService = Depends(get_app_service),
+        auth_service: AuthService = Depends(get_auth_service),
+        user_crud: AuthRepository = Depends(get_user_repository),
+        app_crud: AppRepository = Depends(get_app_repository)
+    ):
+    # first check the token sends from user is valid or not
+    user: Users = await auth_service.validate_token(
+        token = token,
+        db = db,
+        user_crud = user_crud
+    )
+    
+    # the validations was successfull so we can update app for user
+    # NOTE: dict(updated_data): this is used to convert the CreateAppRequest object (pydantic object) into a dictionary
+    
+    # remove field from model  NOT send from user
+    updated_data = data.model_dump(exclude_unset=True)
+
+    return await app_service.update(
+        db,
+        app_crud,
+        app_id,
+        dict(updated_data),
+        user
+    )
+
 # ================================== read app ====================================================================
