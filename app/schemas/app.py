@@ -1,10 +1,15 @@
-from pydantic  import BaseModel, field_validator, field_serializer
+from pydantic  import BaseModel, field_validator, ConfigDict
 from typing import Literal
 import datetime
 import app.utils.extract_job_list as extract_job_list
 import app.utils.extract_position_list as extract_position_list
 import app.utils.extract_status_list  as extract_status_list
+from app.models.applications import Applications
 
+# =============================== read ============================ 
+class GetAllAppResponse(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+    apps: list[Applications]
 
 # =============================== Create ============================ 
 class CreateAppRequest(BaseModel):

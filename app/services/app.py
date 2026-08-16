@@ -16,6 +16,28 @@ from app.schemas.app import (
 dotenv.load_dotenv()
 
 class AppService:
+    async def get_all(
+        self,
+        db: AsyncSession,
+        app_crud: AppRepository,
+        user: Users,
+    ):
+        """
+        Get all apps for authenticated user.
+        
+        Args:
+            db: database Session.
+            app_crud: repository of application.
+            user: authenticated user object.
+            
+        Returns:
+            list of all applications of authenticated user.
+            
+        Raises:
+
+        """
+        return await app_crud.get_all_app(db=db, user_id=user.id)
+
     async def create(
         self, db: AsyncSession, app_crud: AppRepository, app_data: dict, user: Users
     ):

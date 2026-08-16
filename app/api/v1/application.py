@@ -11,7 +11,8 @@ from app.services.auth import AuthService
 from app.schemas.app import (
     CreateAppRequest, CreateAppResponse,
      DeleteAppResponse,
-     UpdateAppRequest, UpdateAppResponse
+     UpdateAppRequest, UpdateAppResponse,
+     GetAllAppResponse
 )
 from app.models import Users
 
@@ -178,3 +179,26 @@ async def update_app_by_id(
     )
 
 # ================================== read app ====================================================================
+@router.get("/app/all", status_code=status.HTTP_200_OK,)
+async def get_all_app(
+        token: str =  Depends(oauth2_scheme),
+        db: AsyncSession = Depends(get_db),
+        app_service: AppService = Depends(get_app_service),
+        auth_service: AuthService = Depends(get_auth_service),
+        user_crud: AuthRepository = Depends(get_user_repository),
+        app_crud: AppRepository = Depends(get_app_repository),
+    ):
+    # first check the token sends from user is valid or not
+    user: Users = await auth_service.validate_token(
+        token = token,
+        db = db,
+        user_crud = user_crud
+    )
+
+
+    # the validations was successfull so we can give apps to user
+    return await app_service.get_all(
+        db,
+        app_crud,
+        user,
+    )

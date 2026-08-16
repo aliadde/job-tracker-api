@@ -22,7 +22,13 @@ class AppRepository:
         await db.commit()
         await db.refresh(new_app)
         return new_app
-    
+
+    async def get_all_app(slef, db: AsyncSession, user_id: int ) -> list[Applications]:
+        """ Get all application from datbase """
+        stmst = select(Applications).where(Applications.user_id == user_id)
+        result = await db.execute(stmst)
+        return result.scalars().all()
+
     async def get_company_by_name(self, db: AsyncSession, name: str):
         from app.models.companies import Companies
         query = select(Companies).where(Companies.name == name)
