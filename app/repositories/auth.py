@@ -56,6 +56,6 @@ class AuthRepository:
         return result.first()
     
     async def get_by_id(self, db: AsyncSession, id: int)-> Users|None:
-            stmt = select(Users).options(selectinload(Users.applications)).where(Users.username == id)
+            stmt = select(Users).options(selectinload(Users.applications)).where(Users.id == id)
             result: Users|None = await db.scalars(stmt)
             return result.first()
