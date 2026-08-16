@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from app.models.applications import Applications
 from app.schemas.app import CreateAppRequest, CreateAppResponse
+import datetime
 
 class AppRepository:
     async def create(self, db: AsyncSession,data: CreateAppRequest)-> CreateAppResponse:
@@ -79,7 +80,7 @@ class AppRepository:
         # change fields and value of them
         for key, value in updated_data.items():
             setattr(app, key, value)
-        
+        app.updated_at = str(datetime.datetime.now())
         db.commit()
         db.refresh(app)
         return app

@@ -112,7 +112,7 @@ async def delete_app_by_title(
         app_title,
         user
     )
-    
+
 # ================================== update app ====================================================================
 @router.patch("/app/update/title/{app_title}", status_code=status.HTTP_200_OK, response_model=UpdateAppResponse)
 async def update_app_by_title(
@@ -134,7 +134,7 @@ async def update_app_by_title(
     
     # the validations was successfull so we can update app for user
     # NOTE: dict(updated_data): this is used to convert the CreateAppRequest object (pydantic object) into a dictionary
-    
+
     # remove field from model  NOT send from user
     updated_data = data.model_dump(exclude_unset=True)
 

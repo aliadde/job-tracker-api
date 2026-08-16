@@ -121,7 +121,7 @@ async def test_update_an_app_by_title(setup_,client):
     assert response_update.json().get("id") == app.get("id")
     assert response_update.json().get("title") == app.get("title")
     assert response_update.json().get("applied_at") == "2023-04-01T12:00:00Z"
-    
+    assert type(response_update.json().get("updated_at")) == str
 @pytest.mark.anyio
 async def test_update_an_app_by_title_with_all_fields(
     setup_, client, create_company
