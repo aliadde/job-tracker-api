@@ -64,7 +64,9 @@ async def current_user(
     db: AsyncSession = Depends(get_db),
     user_crud=Depends(get_auth_repository),
 ):
-    return await auth_service.get_current_user(token, db, user_crud)
+    user = await auth_service.validate_token(token=token, db=db,user_crud=user_crud)
+
+    return await auth_service.get_current_user(user, db, user_crud)
 
 @router.delete("/delete", status_code=status.HTTP_200_OK)
 async def delete_user(

@@ -15,7 +15,7 @@ def create_user(client):
     return login_response.json().get("access_token")
 
 
-def test_get_current_usr_success(client, create_user):
+def test_get_current_user_success(client, create_user):
     access_token = create_user
     
     # Now send request get request to end point /auth/current_user with Barear token set
@@ -26,6 +26,3 @@ def test_get_current_usr_success(client, create_user):
     assert response.json().get("username") == "testuser"
     assert response.json().get("email") == "test@example.com"
     assert response.json().get("is_active") == True
-    
-def test_get_current_usr_failure(client, create_user):
-    ...
