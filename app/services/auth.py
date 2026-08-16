@@ -49,7 +49,7 @@ class AuthService:
         )
 
         return user
-    
+
     async def login(
         self,
         db: Session,
@@ -146,39 +146,35 @@ class AuthService:
             "applications": [application.title for application in found_user.applications]
         }
         return ready_user
-    
+
     async def delete(
         self,
-        user_id: int,
+        user: Users,
         db: Session,
         user_crud: AuthRepository,
     )-> Users:
         """
         Delete user.
-        This service get user from database by id, then will delete the user.
+        User can delete itself account.
 
         Args:
-            user_id: id of the user.
+            user: current user logged in object ``app.models.users class Users``.
 
         Returns:
             Return the deleted user.
 
         Raises:
-            HTTPException: status code 404 if user not found by that id.
 
         """
-        user = await user_crud.get_by_id(db=db, id=user_id)
-
-        if user is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found",
-            )
-
-        return await user_crud.delete(
+        deleted_user: Users =  await user_crud.delete(
             db=db,
             user=user,
         )
+        # convert Users class object to dictionary
+        deleted_user = deleted_user.__dict__
+        del deleted_user['hashed_password']
+        del deleted_user['_sa_instance_state']
+        return deleted_user
 
     async def validate_token(
         self,
@@ -186,7 +182,7 @@ class AuthService:
         db: AsyncSession,
         user_crud:  AuthRepository
     )-> Users:
-        """ 
+        """
             This method validate the token sent from user.
             It will check the token is valid or not and also it will extract the payload from token. 
             If the token is invalid then it will raise an exception with status code 401 Unauthorized.
@@ -201,7 +197,7 @@ class AuthService:
                 detail="Not authenticated",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-    
+
         # query database and return user object completly
         found_user = await user_crud.get_by_username(
             db=db,
@@ -212,6 +208,6 @@ class AuthService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found",
             )
-            
+
         # return complete user object
-        return found_user 
+        return found_user

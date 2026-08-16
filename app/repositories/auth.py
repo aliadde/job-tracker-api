@@ -11,7 +11,7 @@ class AuthRepository:
         email: str,
         hashed_password: str
     ):
-        
+
         user = Users(
             username=username, 
             email=email,

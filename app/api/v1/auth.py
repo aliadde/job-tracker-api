@@ -37,7 +37,6 @@ async def register(
     db: AsyncSession = Depends(get_db),
     user_crud=Depends(get_auth_repository),
 ):
-
     return await auth_service.register(db, user_data, user_crud)
 
 
@@ -55,7 +54,10 @@ async def login(
     return await auth_service.login(db, user_data, user_crud)
 
 
-@router.get("/current_user", status_code=status.HTTP_200_OK)
+@router.get(
+    "/current_user",
+    status_code=status.HTTP_200_OK
+)
 async def current_user(
     token: str = Depends(oauth2_scheme),
     auth_service: AuthService = Depends(get_auth_service),
@@ -64,16 +66,21 @@ async def current_user(
 ):
     return await auth_service.get_current_user(token, db, user_crud)
 
-@router.delete("/{user_id}", status_code=status.HTTP_200_OK)
+@router.delete("/delete", status_code=status.HTTP_200_OK)
 async def delete_user(
-    user_id: int ,
     token: str = Depends(oauth2_scheme),
     auth_service: AuthService = Depends(get_auth_service),
     db: AsyncSession = Depends(get_db),
     user_crud=Depends(get_auth_repository),
 ):
-    AuthService.delete(
-        user_id=user_id,
+    user = await auth_service.validate_token(
+        token=token,
+        db=db,
+        user_crud=user_crud,
+    )
+
+    return await auth_service.delete(
+        user=user,
         db=db,
         user_crud=user_crud,
     )
