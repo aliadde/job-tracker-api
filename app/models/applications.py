@@ -9,7 +9,7 @@ import app.models as models
 class Applications(Base):
     __tablename__ = "applications"
     id : Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    title: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
     
     applied_at: Mapped[str | None] 
     response_date: Mapped[str | None]
