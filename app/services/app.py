@@ -24,7 +24,7 @@ class AppService:
     ):
         """
         Get all apps for authenticated user.
-        
+
         Args:
             db: database Session.
             app_crud: repository of application.

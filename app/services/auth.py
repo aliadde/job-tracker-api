@@ -25,7 +25,7 @@ class AuthService:
             This function will register a new user in the database.
             at frist check user exist with same email. if anyone exist an execption raise.
             then hash the user password. finally dump user to databse and return same user object from database.
-            
+
             :param db: AsyncSession - The database session to use for the operation.
             :param data: schema_register.UserRegisterRequest - The user registration data.
             :user_crud: AuthRepository - The repository to interact with the users table.
@@ -147,6 +147,39 @@ class AuthService:
         }
         return ready_user
     
+    async def delete(
+        self,
+        user_id: int,
+        db: Session,
+        user_crud: AuthRepository,
+    )-> Users:
+        """
+        Delete user.
+        This service get user from database by id, then will delete the user.
+
+        Args:
+            user_id: id of the user.
+
+        Returns:
+            Return the deleted user.
+
+        Raises:
+            HTTPException: status code 404 if user not found by that id.
+
+        """
+        user = await user_crud.get_by_id(db=db, id=user_id)
+
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found",
+            )
+
+        return await user_crud.delete(
+            db=db,
+            user=user,
+        )
+
     async def validate_token(
         self,
         token: str ,
