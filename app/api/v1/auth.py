@@ -91,7 +91,7 @@ async def delete_user(
 # ============================================= UPDATE ===============================
 @router.patch("/update", status_code=status.HTTP_200_OK)
 async def update_user(
-    update_data: UpdateUserRequest = Body(...),
+    update_data: UpdateUserRequest ,
     token: str = Depends(oauth2_scheme),
     auth_service: AuthService = Depends(get_auth_service),
     db: AsyncSession = Depends(get_db),

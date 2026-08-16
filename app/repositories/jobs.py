@@ -14,6 +14,14 @@ class JobRepository:
         await db.commit()
         await db.refresh(job)
         return job
+
+
+    async def get_all(self, db: AsyncSession):
+        from app.models.jobs import Jobs
+        stmt = select(Jobs)
+        result = await db.execute(stmt)
+        return result.scalars().all()
+    
     
     async def get_by_job_title(self, db: AsyncSession, title: str)-> Jobs|None:
         from app.models.jobs import Jobs
