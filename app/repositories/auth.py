@@ -2,7 +2,23 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from app.models.users import Users
+import datetime
+
 class AuthRepository:
+
+    async def update_user(
+        self,
+        db: AsyncSession,
+        update_data: dict,
+        user: Users,
+    ):
+        for key, value in update_data.items():
+                setattr(user, key, value)
+        user.update_at = str(datetime.datetime.now())
+
+        await db.commit()
+        await db.refresh(user)
+        return user
 
     async def create(
         self,

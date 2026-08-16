@@ -1,4 +1,4 @@
-import dotenv, os
+import dotenv, os, typing
 from sqlalchemy.orm import Session
 from fastapi import  status, HTTPException
 import app.schemas.register as schema_register
@@ -7,9 +7,13 @@ from app.repositories.auth import AuthRepository
 from app.core.security import (
     hash_password, verify_password, create_jwt_token, decode_jwt_token
 )
-
 from app.models.users import Users
 from sqlalchemy.ext.asyncio import AsyncSession
+import app.core.security as security
+if typing.TYPE_CHECKING:
+    from app.schemas.update_user import UpdateUserRequest
+
+
 dotenv.load_dotenv()
 # ==================================
 
@@ -102,6 +106,26 @@ class AuthService:
             
         raise HTTPException(status.HTTP_404_NOT_FOUND, 
                     detail="invalid username or password")
+
+    async def update(
+        self,
+        db: Session,
+        user: Users,
+        update_data: dict,
+        user_crud: AuthRepository
+    )-> Users:
+        if update_data.get("password"):
+            update_data["hashed_password"] = security.hash_password(update_data.get("password"))
+            del update_data["password"]
+
+        updated_user: Users = await user_crud.update_user(
+            db=db,
+            user=user,
+            update_data=update_data,
+        )
+
+        delattr(updated_user, "hashed_password")
+        return updated_user
 
     async def get_current_user(
         self,
