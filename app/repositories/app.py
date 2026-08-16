@@ -81,6 +81,6 @@ class AppRepository:
         for key, value in updated_data.items():
             setattr(app, key, value)
         app.updated_at = str(datetime.datetime.now())
-        db.commit()
-        db.refresh(app)
+        await db.commit()
+        await db.refresh(app)
         return app
