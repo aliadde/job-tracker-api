@@ -38,6 +38,14 @@ class AppService:
         """
         return await app_crud.get_all_app(db=db, user_id=user.id)
 
+    async def get_by_id(
+        self,
+        app_id: int,
+        app_crud: AppRepository,
+        db: AsyncSession,
+    ):
+        return await app_crud.get_app_by_id(db=db,id=app_id)
+    
     async def create(
         self, db: AsyncSession, app_crud: AppRepository, app_data: dict, user: Users
     ):

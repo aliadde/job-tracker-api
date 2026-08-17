@@ -202,3 +202,28 @@ async def get_all_app(
         app_crud,
         user,
     )
+
+@router.get("/app/id/{app_id}", status_code=status.HTTP_200_OK,)
+async def get_app_by_id(
+        app_id: int,
+        token: str =  Depends(oauth2_scheme),
+        db: AsyncSession = Depends(get_db),
+        app_service: AppService = Depends(get_app_service),
+        auth_service: AuthService = Depends(get_auth_service),
+        user_crud: AuthRepository = Depends(get_user_repository),
+        app_crud: AppRepository = Depends(get_app_repository),
+    ):
+    # first check the token sends from user is valid or not
+    user: Users = await auth_service.validate_token(
+        token = token,
+        db = db,
+        user_crud = user_crud
+    )
+
+
+    # the validations was successfull so we can give apps to user
+    return await app_service.get_by_id(
+        app_id=app_id,
+        app_crud=app_crud,
+        db=db
+    )

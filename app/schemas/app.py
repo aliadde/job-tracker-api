@@ -16,8 +16,6 @@ class CreateAppRequest(BaseModel):
     title: str
     applied_at: datetime.datetime | None = None
     response_date: datetime.datetime | None = None
-    created_at: datetime.datetime = datetime.datetime.now().isoformat()# why isoformat? becuase datetime.datetime.now() is not serializabe by python
-    updated_at: datetime.datetime = datetime.datetime.now().isoformat()
     company: None | str = None
     status : None | str = None
     position: None | str = None

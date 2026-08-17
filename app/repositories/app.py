@@ -11,8 +11,6 @@ class AppRepository:
             title=data.get("title"),
             applied_at=data.get("applied_at"),
             response_date=data.get("response_date"),
-            created_at=data.get("created_at"),
-            updated_at=data.get("updated_at"),
             company_id=data.get("company"),
             user_id=data.get("user_id"),
             status_id=data.get("status"),
@@ -80,7 +78,7 @@ class AppRepository:
         # change fields and value of them
         for key, value in updated_data.items():
             setattr(app, key, value)
-        app.updated_at = str(datetime.datetime.now())
+        app.updated_at = datetime.datetime.now()
         await db.commit()
         await db.refresh(app)
         return app

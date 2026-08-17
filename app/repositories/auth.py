@@ -14,7 +14,7 @@ class AuthRepository:
     ):
         for key, value in update_data.items():
                 setattr(user, key, value)
-        user.update_at = str(datetime.datetime.now())
+        user.update_at = datetime.datetime.now()
 
         await db.commit()
         await db.refresh(user)

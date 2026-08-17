@@ -5,6 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.repositories.positions import PositionRepository
 from app.repositories.status import StatusRepository
 from app.repositories.jobs import JobRepository
+from app.repositories.company import CompanyRepository
+
+from app.schemas.company import CreateCompanyRequest,CreateCompanyResponse
 
 from app.db.database import get_db
 # ========================== Router ==================================
@@ -18,6 +21,9 @@ def status_crud():
 
 def job_crud():
     return JobRepository()
+
+def company_crud():
+    return CompanyRepository()
 
 def metadata_service():
     return MetadataService()
@@ -59,3 +65,15 @@ async def get_all_positions(
         position_crud=position_crud,
     )
 
+@router.post("/company", status_code=status.HTTP_201_CREATED, response_model=CreateCompanyResponse)
+async def add_company(
+    company: CreateCompanyRequest,
+    db: AsyncSession = Depends(get_db),
+    company_crud: CompanyRepository = Depends(company_crud),
+    metadata_service: MetadataService = Depends(metadata_service),
+):
+    return await metadata_service.create_company(
+        db=db,
+        company_crud=company_crud,
+        company=company
+    )

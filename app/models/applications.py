@@ -13,8 +13,8 @@ class Applications(Base):
     
     applied_at: Mapped[str | None] 
     response_date: Mapped[str | None]
-    created_at: Mapped[str ] = mapped_column(default=datetime.datetime.now)
-    updated_at: Mapped[str ] = mapped_column(default=datetime.datetime.now)
+    created_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now)
+    updated_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.now)
 
     # ForeignKeys
     user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))  # A user can have multiple companies

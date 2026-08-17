@@ -32,12 +32,12 @@ def tear_down():
 @pytest.fixture()
 def client():
     return TestClient(main.app)
-     
+
 async def override_get_db():
     session = TestSessionLocal()
     try:
         yield session 
     finally:
         await session.close()
-        
+
 main.app.dependency_overrides[get_db] = override_get_db
