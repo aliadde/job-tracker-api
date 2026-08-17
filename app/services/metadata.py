@@ -1,10 +1,8 @@
-import typing
-if typing.TYPE_CHECKING:
-    from app.repositories.positions import PositionRepository
-    from app.repositories.status import StatusRepository
-    from app.repositories.jobs import JobRepository
-    from sqlalchemy.ext.asyncio import AsyncSession
-     
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.repositories.positions import PositionRepository
+from app.repositories.status import StatusRepository
+from app.repositories.jobs import JobRepository
+
 
 class MetadataService:
     

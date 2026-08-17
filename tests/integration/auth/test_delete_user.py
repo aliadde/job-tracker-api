@@ -1,8 +1,5 @@
 import pytest
-from fastapi import HTTPException
-import typing
-if typing.TYPE_CHECKING:
-    from app.models.users import Users
+from app.models.users import Users
 
 # ================== Fixture ===============
 @pytest.fixture

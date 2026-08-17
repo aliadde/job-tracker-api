@@ -10,8 +10,7 @@ from app.core.security import (
 from app.models.users import Users
 from sqlalchemy.ext.asyncio import AsyncSession
 import app.core.security as security
-if typing.TYPE_CHECKING:
-    from app.schemas.update_user import UpdateUserRequest
+from app.schemas.update_user import UpdateUserRequest
 
 
 dotenv.load_dotenv()

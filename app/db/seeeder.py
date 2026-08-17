@@ -23,7 +23,7 @@ class Seeder:
       self.position_crud = position_crud
 
 
-   async def create_jobs(self, extract_job_list:function):
+   async def create_jobs(self, extract_job_list):
       """ 
       dump jobs to database on startup the app.
       parameters:
@@ -40,7 +40,7 @@ class Seeder:
       for job in job_list:
          await self.job_crud.create(title=job , db=self.db)
 
-   async def create_statuses(self, extract_status_list: function):
+   async def create_statuses(self, extract_status_list):
       #  =================================
       # statuses 
       #  =================================
@@ -48,7 +48,7 @@ class Seeder:
       for status in statuses_list:
          await self.status_crud.create(db=self.db, status=status)
    
-   async def create_positions(self, extract_position_list: function):
+   async def create_positions(self, extract_position_list):
       #  =================================
       # Positions
       #  =================================

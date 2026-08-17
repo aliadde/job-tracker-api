@@ -1,8 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-import typing
-if typing.TYPE_CHECKING:
-    from app.models.statuses import Statuses
+from app.models.statuses import Statuses
 
 
 class StatusRepository:
