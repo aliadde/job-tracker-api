@@ -26,11 +26,11 @@ class JobRepository:
     async def get_by_job_title(self, db: AsyncSession, title: str)-> Jobs|None:
         from app.models.jobs import Jobs
         stmt = select(Jobs).options(selectinload(Jobs.applications)).where(Jobs.title == title)
-        result: Jobs|None = await db.scalars(stmt).first()
-        return result
+        result = await db.execute(stmt)
+        return result.scalars().first()
     
     async def get_by_id(self, db: AsyncSession, id: int)-> Jobs|None:
             from app.models.jobs import Jobs
             stmt = select(Jobs).options(selectinload(Jobs.applications)).where(Jobs.id == id)
-            result: Jobs|None = await db.scalars(stmt).first()
-            return result
+            result = await db.execute(stmt)
+            return result.scalars().first()

@@ -13,6 +13,11 @@ class StatusRepository:
         await db.refresh(status)
         return status
     
+    async def get_by_status(self, db:AsyncSession , status: str):
+        stmt = select(Statuses).where(Statuses.status == status)
+        result = await db.execute(stmt)
+        return result.scalars().first()
+    
     async def get_all(self, db:AsyncSession) -> list[Statuses]:
         from app.models.statuses import Statuses
         stmt = select(Statuses)

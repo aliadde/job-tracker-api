@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
 
     async with SessionLocal() as db:
         # seeder create jobs and statuses and positions
-        await init_seeder(SessionLocal)
+        await init_seeder(db)
 
     yield
     
