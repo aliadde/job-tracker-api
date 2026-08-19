@@ -54,7 +54,7 @@ SQLAlchemy / Database
 
 The database contains users and job applications as the main domain entities, with supporting entities such as companies, jobs, positions, statuses, and resumes.
 
->  the database / ER diagram image here.
+>  the database / ER diagram.
 
 
 
